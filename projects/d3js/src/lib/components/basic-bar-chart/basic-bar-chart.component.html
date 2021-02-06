@@ -1,0 +1,12 @@
+<div class="content" role="main">
+      <input type="radio" id="xscale" name="xyscale" value="xscale" (click)="render('xscale')">
+      <label for="xscale">The chart is now expanded to the SVG conteneur width</label><br>   
+      
+      <input type="radio" id="yscale" name="xyscale" value="yscale"  (click)="render('yscale')">        
+      <label for="yscale"> The chart has been scaled for the biggest bar (the biggest one) to be the same height as our SVG container </label><br> 
+
+      <input type="radio" id="xyscale" name="xyscale" value="yscale"  (click)="render('responsive')">        
+      <label for="xyscale"> responsive </label><br> 
+
+    <div id="d3jchartcontainer" #d3jchartcontainer></div>  
+</div>

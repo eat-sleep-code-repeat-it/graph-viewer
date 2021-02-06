@@ -1,0 +1,6 @@
+#bar-chart { width:100%; background-color:grey; }
+#bar-chart svg { background-color: Gainsboro; }
+#bar-chart .bars { fill: LightSkyBlue; }
+#d3jchartcontainer  { 
+    width:100%; 
+    background-color:grey; }
