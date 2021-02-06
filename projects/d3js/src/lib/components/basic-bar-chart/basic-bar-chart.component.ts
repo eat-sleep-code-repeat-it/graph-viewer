@@ -15,7 +15,7 @@ export class BasicBarChartComponent implements OnInit {
   }
 
   ngOnInit(): void {    
-    this.render('responsive');
+    this.render('axis');
   }
 
   render(scaleType: string) {
@@ -24,8 +24,10 @@ export class BasicBarChartComponent implements OnInit {
       this.xScaleBarChart();
     } else if (scaleType ==='yscale') {
       this.yScaleBarChart();
-    } else {
+    } else if (scaleType === 'responsive') {
       this.responsiveBarChart();
+    } else {
+      this.drawAxes();
     }
   }
 
@@ -131,7 +133,48 @@ export class BasicBarChartComponent implements OnInit {
         .attr('x', (d,i) => xScale(i) )
         .attr('y', (d) => height-yScale(d))
         .attr('width', xScale(0.9))
-        .attr('height', (d) => yScale(d));
-        
+        .attr('height', (d) => yScale(d));        
+  }
+
+  drawAxes() {
+    if (this.svg) this.svg.remove();
+    let element: any = this.chartContainer.nativeElement;
+
+    // Create our SVG container
+    this.svg = d3.select(element)
+      .append("svg")
+        .attr('width', 400)
+        .attr('height', 200);
+
+    // X Scale
+    var xScale = d3.scaleLinear()
+      .domain([0, 10]) 
+      .range([30, 370]);
+
+    // Bottom axis
+    this.svg.append('g')
+      .attr('transform', 'translate(0, 180)')
+      .call(d3.axisBottom(xScale));
+
+    // Top axis
+    this.svg.append('g')
+      .attr('transform', 'translate(0, 20)')
+      .call(d3.axisTop(xScale));
+
+    // Y Scale
+    var yScale = d3.scaleLinear()
+      .domain([0, 50]) 
+      .range([30, 170]);
+
+    // Left axis
+    this.svg.append('g')
+      .attr('transform', 'translate(20, 0)')
+      .call(d3.axisLeft(yScale).ticks(5));
+
+    // Right axis   
+    this.svg.append('g')
+      .attr('transform', 'translate(380, 0)')
+      .call(d3.axisRight(yScale).ticks(10));
+
   }
 }
