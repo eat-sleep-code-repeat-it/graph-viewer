@@ -11,7 +11,6 @@ import { BasicDataBindingComponent } from './components/basic-data-binding/basic
 import { BasicBarChartComponent } from './components/basic-bar-chart/basic-bar-chart.component';
 
 
-
 @NgModule({
   declarations: [
     D3jsComponent,

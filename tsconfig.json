@@ -19,6 +19,10 @@
       "d3js": [
         "dist/d3js/d3js",
         "dist/d3js"
+      ],
+      "cyto-scape": [
+        "dist/cyto-scape/cyto-scape",
+        "dist/cyto-scape"
       ]
     }
   }

@@ -158,6 +158,46 @@
           }
         }
       }
+    },
+    "cyto-scape": {
+      "projectType": "library",
+      "root": "projects/cyto-scape",
+      "sourceRoot": "projects/cyto-scape/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/cyto-scape/tsconfig.lib.json",
+            "project": "projects/cyto-scape/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/cyto-scape/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/cyto-scape/src/test.ts",
+            "tsConfig": "projects/cyto-scape/tsconfig.spec.json",
+            "karmaConfig": "projects/cyto-scape/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/cyto-scape/tsconfig.lib.json",
+              "projects/cyto-scape/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "graph-viewer",
