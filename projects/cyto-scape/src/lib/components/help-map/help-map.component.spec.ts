@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CytographComponent } from './cytograph.component';
+import { HelpMapComponent } from './help-map.component';
 
-describe('CytographComponent', () => {
-  let component: CytographComponent;
-  let fixture: ComponentFixture<CytographComponent>;
+describe('HelpMapComponent', () => {
+  let component: HelpMapComponent;
+  let fixture: ComponentFixture<HelpMapComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CytographComponent ]
+      declarations: [ HelpMapComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CytographComponent);
+    fixture = TestBed.createComponent(HelpMapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

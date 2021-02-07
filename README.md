@@ -12,3 +12,6 @@
 ## Cytoscape
 
 - https://cytoscape-angular.web.app/
+- https://github.com/asiftasleem/angular-cytoscape
+- https://github.com/wmjalak/angular-cytoscape-dagre
+- https://cytoscape-angular.web.app/

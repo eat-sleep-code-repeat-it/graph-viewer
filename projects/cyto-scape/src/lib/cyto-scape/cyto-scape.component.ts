@@ -6,10 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./cyto-scape.component.css']
 })
 export class CytoScapeComponent implements OnInit {
-
   constructor() { }
-
   ngOnInit(): void {
   }
-
 }
