@@ -11,7 +11,7 @@ export class HelpMapComponent implements OnInit {
   graphData = {
     nodes: [        
       { data: {
-          id: 'a', name: 'cyto-scape', weight: 100, colorCode: 'blue',  shapeType: 'roundrectangle',
+          id: 'a', name: 'cyto-scape', weight: 300, colorCode: 'blue', shapeType:'roundrectangle',
           description:'main entry to cyto-scape library'
         }
       },

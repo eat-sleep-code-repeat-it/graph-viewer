@@ -15,3 +15,5 @@
 - https://github.com/asiftasleem/angular-cytoscape
 - https://github.com/wmjalak/angular-cytoscape-dagre
 - https://cytoscape-angular.web.app/
+- https://github.com/cytoscape/cytoscape.js/tree/master/documentation/demos
+- http://manual.cytoscape.org/en/stable/Styles.html

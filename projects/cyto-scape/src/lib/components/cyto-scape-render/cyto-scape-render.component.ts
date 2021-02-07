@@ -29,42 +29,42 @@ export class CytoScapeRenderComponent implements OnChanges {
 
 	this.style = this.style || cytoscape.stylesheet()
 		.selector('node')
-		.css({
-			'shape': 'data(shapeType)',
-			'width': 'mapData(weight, 40, 80, 20, 60)',
-			'content': 'data(name)',
-			'text-valign': 'center',
-			'text-outline-width': 1,
-			'text-outline-color': 'data(colorCode)',
-			'background-color': 'data(colorCode)',
-			'color': '#fff',
-			'font-size': 10
-		})
+			.css({
+				'shape': 'data(shapeType)',
+				'width': 'mapData(weight, 40, 80, 20, 100)',
+				'content': 'data(name)',
+				'text-valign': 'center',
+				'text-outline-width': 1,
+				'text-outline-color': 'data(colorCode)',
+				'background-color': 'data(colorCode)',
+				'color': '#fff',
+				'font-size': 10
+			})
 		.selector(':selected')
-		.css({
-			'border-width': 1,
-			'border-color': 'black'
-		})
+			.css({
+				'border-width': 1,
+				'border-color': 'black'
+			})
 		.selector('edge')
-		.css({
-			'curve-style': 'bezier',
-			'opacity': 0.666,
-			'width': 'mapData(strength, 70, 100, 2, 6)',
-			'target-arrow-shape': 'triangle',
-			'line-color': 'data(colorCode)',
-			'source-arrow-color': 'data(colorCode)',
-			'target-arrow-color': 'data(colorCode)'
-		})
+			.css({
+				'curve-style': 'bezier',
+				'opacity': 0.666,
+				'width': 'mapData(strength, 70, 100, 2, 6)',
+				'target-arrow-shape': 'triangle',
+				'line-color': 'data(colorCode)',
+				'source-arrow-color': 'data(colorCode)',
+				'target-arrow-color': 'data(colorCode)'
+			})
 		.selector('edge.questionable')
-		.css({
-			'line-style': 'dotted',
-			'target-arrow-shape': 'diamond'
-		})
+			.css({
+				'line-style': 'dotted',
+				'target-arrow-shape': 'diamond'
+			})
 		.selector('.faded')
-		.css({
-			'opacity': 0.25,
-			'text-opacity': 0
-		});
+			.css({
+				'opacity': 0.25,
+				'text-opacity': 0
+			});
 	}
 
 	public ngOnChanges(): any {
@@ -75,6 +75,8 @@ export class CytoScapeRenderComponent implements OnChanges {
 	public render() {
 		cytoscape.use(dagre); // register extension
 		let cy_contianer = this.renderer.selectRootElement("#cy");
+		// container: document.getElementById('cy'),
+
 		let localselect = this.select;
 		let cy = cytoscape({
 				container : cy_contianer,
@@ -84,6 +86,8 @@ export class CytoScapeRenderComponent implements OnChanges {
 				style: this.style,
 				elements: this.elements,
 		});
+
+		cy.nodes().forEach(function(n){ n.data('width',400); });
 
 		cy.on('tap', 'node', function(e) {
 			var node = e.target;

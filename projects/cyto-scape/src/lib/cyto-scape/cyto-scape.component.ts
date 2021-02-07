@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./cyto-scape.component.css']
 })
 export class CytoScapeComponent implements OnInit {
+  bgColor = 'Cyan';
   constructor() { }
   ngOnInit(): void {
   }
