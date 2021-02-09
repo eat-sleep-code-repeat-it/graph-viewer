@@ -1,8 +1,21 @@
 <div style="height: 90%; width: 80%; float: left; overflow: auto; overflow-y: hidden">
-	<lib-cyto-scape-render [elements]="graphData" [layout]="layout" (select)="nodeChange($event)"></lib-cyto-scape-render>
+	<lib-cyto-scape-render [elements]="graphData" [layout]="layout"
+		[addNode$] ="addNode$"
+		[saveGraph$] ="saveGraph$"
+		[exportImage$] ="exportImage$"
+		[mouseAction$]= "mouseAction$"
+		[center$] = "center$"
+		(select)="nodeChange($event)"></lib-cyto-scape-render>
 </div>
 
 <div style="height: 90%; width: 20%; float: left; overflow: auto; overflow-x: hidden">
-	<h1>Selected Node Name</h1>
-	<h2>{{node_name}}</h2>
+	<button (click)="addNewNode()"> addNewNode </button> <br>
+	<button (click)="saveGraph()"> saveGraph </button>  <br>
+	<button (click)="exportImage()"> exportImage </button>  <br>
+	<button (click)="center()"> center </button>  <br>
+
+	<button (click)="resetMouse()"> resetMouse </button>  <br>
+
+	<h2> Selected Node Name: {{node_name}}</h2>
+	
 </div>

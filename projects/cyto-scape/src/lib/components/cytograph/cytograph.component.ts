@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { CytoNode } from '../../models/cyto-node';
+import { CytoNodeShape } from '../../models/cyto-node-shape';
+import { MouseAction } from '../../models/mouse-action';
 
 @Component({
   selector: 'lib-cytograph',
@@ -31,13 +35,46 @@ export class CytographComponent implements OnInit {
         { data: { source: 'e', target: 'k', colorCode: 'green', strength: 10 } }
     ]
   };
+ 
 
+  mouseAction$: Subject<MouseAction> = new Subject();
+  saveGraph$: Subject<any> = new Subject();
+  exportImage$: Subject<any> = new Subject();
+  addNode$: Subject<any> = new Subject();
+  center$: Subject<any> = new Subject();
+
+  newNodeCount = 0;
   constructor() { }
 
   ngOnInit(): void {
   }
   nodeChange(event) {
     this.node_name = event;
+  }
+  addNewNode() {
+    const newNode: CytoNode = { 
+      id: this.newNodeCount++ + '_' + Date.now().toString(),
+      name: this.newNodeCount++ + '_' + Date.now().toString(),
+      weight: 100,
+      colorCode: 'blue',
+      shapeType: CytoNodeShape.RoundRectangle
+    };
+    this.addNode$.next(newNode);
+
+    this.mouseAction$.next(MouseAction.AddNewNode);
+
+  }
+  saveGraph(){
+    this.saveGraph$.next(true);
+  }
+  exportImage() {
+    this.exportImage$.next(true)
+  }
+  resetMouse() {
+    this.mouseAction$.next(MouseAction.None);
+  }
+  center() {
+    this.center$.next(true);
   }
 
 }
