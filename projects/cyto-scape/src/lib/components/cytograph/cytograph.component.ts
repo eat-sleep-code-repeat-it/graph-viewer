@@ -42,6 +42,7 @@ export class CytographComponent implements OnInit {
   exportImage$: Subject<any> = new Subject();
   addNode$: Subject<any> = new Subject();
   center$: Subject<any> = new Subject();
+  openGraphFromJson$: Subject<any> = new Subject();
 
   newNodeCount = 0;
   constructor() { }
@@ -75,6 +76,26 @@ export class CytographComponent implements OnInit {
   }
   center() {
     this.center$.next(true);
+  }
+
+  onFileChange(evt: any) {
+    const target: DataTransfer = <DataTransfer>(evt.target);
+    if (target.files.length !== 1) {
+      console.error("please select one file.");
+      return false;
+    }
+
+    const file = target.files[0];
+    const reader = new FileReader();
+    reader.readAsText(file, 'UTF-8');
+    reader.onload = (e: any) => {
+      const content = e.target.result;
+      if (content) {
+        const json = JSON.parse(content);
+        // console.log('file content:', content);
+        this.openGraphFromJson$.next(json);
+      }
+    }
   }
 
 }

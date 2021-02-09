@@ -27,6 +27,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 	@Input() public addEdge$: Observable<any>;
 	@Input() public removeSelectedNode$: Observable<any>;
 	@Input() public saveGraph$: Observable<any>;
+	@Input() public openGraphFromJson$: Observable<any>;
 	@Input() public exportImage$: Observable<any>;
 
 	@Input() public mouseAction$: Observable<MouseAction>;
@@ -109,6 +110,10 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 				style: this.style,
 				elements: this.elements,
 		});
+
+		//??
+		cy.boxSelectionEnabled(true);
+		cy.selectionType('additive');
 
 		// reset node width
 		cy.nodes().forEach(function(n){ n.data('width', 400); });
@@ -301,8 +306,19 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 					const blob = new Blob([graphJsonStr], {
 						type:'text/plain:charset=utf-8;'
 					});
-					const fileName = '' + new Date().getTime() + '.cytograph';
+					const fileName = '' + new Date().getTime() + '.json';
 					this.saveAsFileHandler(blob, fileName);
+				})
+			);
+		}
+		if (this.openGraphFromJson$){
+			this.subscriptions.push(
+				this.openGraphFromJson$.subscribe((graphJson)=>{
+					if (graphJson && 	this.cytoInstance) {
+						console.log('graphJson:', graphJson);
+						this.cytoInstance.json(graphJson);
+						this.cytoInstance.fit();
+					}					
 				})
 			);
 		}

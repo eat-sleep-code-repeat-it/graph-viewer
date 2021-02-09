@@ -4,6 +4,7 @@
 		[saveGraph$] ="saveGraph$"
 		[exportImage$] ="exportImage$"
 		[mouseAction$]= "mouseAction$"
+		[openGraphFromJson$]="openGraphFromJson$"
 		[center$] = "center$"
 		(select)="nodeChange($event)"></lib-cyto-scape-render>
 </div>
@@ -15,7 +16,18 @@
 	<button (click)="center()"> center </button>  <br>
 
 	<button (click)="resetMouse()"> resetMouse </button>  <br>
+	<p>
+		<input [hidden]="true" type="file"
+			(change)="onFileChange($event)"
+			[multiple]="false"
+			[disabled]="false"
+			#fileInput />
+		<button [disabled]="false" (click)="fileInput.click()">
+			Open Graph Json File
+		</button>
+	</p>
 
 	<h2> Selected Node Name: {{node_name}}</h2>
+	
 	
 </div>
