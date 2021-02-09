@@ -37,6 +37,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 	private subscriptions: Subscription[] = [];
 
 	private mouseAction = MouseAction.None;
+	private localselect = null;
 	public constructor(private renderer : Renderer2, private el: ElementRef) {
 		this.layout = this.layout || {
 				name: 'grid',
@@ -88,7 +89,6 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 					'text-opacity': 0
 				});
 	}
-
 	
 	public ngOnChanges(): any {
 		this.render();
@@ -100,7 +100,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		let cy_contianer = this.renderer.selectRootElement("#cy");
 		// container: document.getElementById('cy'),
 
-		let localselect = this.select;
+		this.localselect = this.select;
 		let cy = cytoscape({
 				container : cy_contianer,
 				layout: this.layout,
@@ -110,17 +110,9 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 				elements: this.elements,
 		});
 
-		cy.nodes().forEach(function(n){ n.data('width',400); });
-
-		cy.on('tap', 'node', (e) => {
-			var node = e.target;
-			var neighborhood = node.neighborhood().add(node);
-
-			cy.elements().addClass('faded');
-			neighborhood.removeClass('faded');
-			localselect.emit( !!node.data('description') ? node.data('description'): node.data('name'));
-		});
-
+		// reset node width
+		cy.nodes().forEach(function(n){ n.data('width', 400); });
+		
 		cy.on('tap', (e) => {
 			if (e.target === cy) {
 				cy.elements().removeClass('faded');
@@ -145,6 +137,14 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		});
 	
 		// handle edge event
+		cy.on('tap', 'node', (e) => {
+			console.log('tap node', e.target);
+			if (e.target) {
+				console.log('click node', e.target);
+
+				this.selectNodeHandler(e.target)
+			}
+		});
 		cy.on('select', 'edge', (evt) => {
 			evt.target.animate({
 				style: { 'line-color': 'red'}
@@ -171,19 +171,12 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		// handle node event
 		cy.on('click', 'node', (evt) => {
 			console.log('click node', evt.target);
-			const node = evt.target;
-			if (node) {
-				const neighborhood = node.neighborhood().add(node);
-				cy.elements().addClass('faded');
-				neighborhood.removeClass('faded');
-				localselect.emit(node.data('name'));
+			if (evt.target) {
+				console.log('click node', evt.target);
+				this.selectNodeHandler(evt.tartget)
 			}
 		});
 		cy.on('select', 'node', (evt) => {
-			if (this.mouseAction !== MouseAction.SelectNode) {
-				return;
-			}
-
 			console.log('select node', evt.target);
 			evt.target.animate({
 				style: {'border-color': 'red', 'border-width': 2}
@@ -237,7 +230,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		if (this.panZoomIn$){
 			this.subscriptions.push(
 				this.panZoomIn$.subscribe((nodeId)=>{
-					this.panZoomIn(nodeId);
+					this.panZoomInHandler(nodeId);
 				})
 			);
 		}
@@ -246,7 +239,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 			this.subscriptions.push(
 				this.panInChild$.subscribe(()=>{
 					if (this.cytoInstance){
-						this.panInChild();
+						this.panInChildHandler();
 					}					
 				})
 			);
@@ -255,7 +248,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		if (this.center$){
 			this.subscriptions.push(
 				this.center$.subscribe(()=>{
-					this.center();
+					this.centerHandler();
 				})
 			);
 		}
@@ -266,7 +259,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 						x: 100,
 						y: 100
 					}
-					this.addNode(position, newNode);
+					this.addNodeHandler(position, newNode);
 				})
 			);
 		}
@@ -294,7 +287,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 				this.removeSelectedNode$.subscribe(()=>{
 					const selected = this.cytoInstance.nodes(':selected');
 					if (selected) {
-						this.removeSelectedNode(selected);
+						this.removeSelectedNodeHandler(selected);
 					}
 				})
 			);
@@ -309,7 +302,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 						type:'text/plain:charset=utf-8;'
 					});
 					const fileName = '' + new Date().getTime() + '.cytograph';
-					this.saveAsFile(blob, fileName);
+					this.saveAsFileHandler(blob, fileName);
 				})
 			);
 		}
@@ -317,23 +310,32 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		if (this.exportImage$){
 			this.subscriptions.push(
 				this.exportImage$.subscribe(()=>{
-					this.exportImage();
+					this.exportImageHandler();
 				})
 			);
 		}
 		
 	}
-	private panZoomIn(nodeId: string) {
+
+	private selectNodeHandler(node: any) {
+		console.log('select node:', node.data('id'), node);
+
+		const neighborhood = node.neighborhood().add(node);
+		this.cytoInstance.elements().addClass('faded');
+		neighborhood.removeClass('faded');
+		this.localselect.emit( !!node.data('description') ? node.data('description'): node.data('name'));
+	}
+	private panZoomInHandler(nodeId: string) {
 		console.log('panZoomIn->', nodeId);
 	}
-	private panInChild() {
+	private panInChildHandler() {
 		console.log('panInChild');
 	}
-	private center() {
+	private centerHandler() {
 		this.cytoInstance.center();
 		console.log('center');
 	}
-	private addNode(position: any, newNode: CytoNode) {
+	private addNodeHandler(position: any, newNode: CytoNode) {
 		console.log('tag', position, newNode);
 		this.cytoInstance.add({
 			group: 'nodes',
@@ -343,22 +345,22 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		console.log('addNode', newNode);
 	} 
  
-	private removeSelectedNode(selectedNode) {
+	private removeSelectedNodeHandler(selectedNode) {
 		console.log('removeSelectedNode', selectedNode);
 	}
 
-	private exportImage() {
+	private exportImageHandler() {
 		if (this.cytoInstance) {
 			const imageName = 'test.png';
 			const options: any = {output:'blob', full: true};
 			const text = this.cytoInstance.png(options);
 			const blobType = 'image/png';
 			const blob = new Blob([text], { type: blobType});
-			this.saveAsFile(blob, imageName);
+			this.saveAsFileHandler(blob, imageName);
 		}
 	}
 
-	private saveAsFile(blob: Blob, fileName: string){
+	private saveAsFileHandler(blob: Blob, fileName: string){
 		console.log('saveAsFile', blob, fileName); 
 		const exportUrl = URL.createObjectURL(blob);
 		if (window.navigator.msSaveBlob){
@@ -372,10 +374,10 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		}
 	}
 
-	private addEdge() {
+	private addEdgeHandler() {
 		console.log('addEdge');
 	}
-	private showHoverInfo() {
+	private showHoverInfoHandler() {
 		console.log('showHoverInfo');
 	}
 
