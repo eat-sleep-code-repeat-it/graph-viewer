@@ -6,7 +6,11 @@
 		[mouseAction$]= "mouseAction$"
 		[openGraphFromJson$]="openGraphFromJson$"
 		[center$] = "center$"
-		(select)="nodeChange($event)"></lib-cyto-scape-render>
+		[selectionType$] = "selectionType$"
+		(nodeSelected)="nodeSelectedChange($event)"
+		(edgeSelected)="edgeSelectedChange($event)">
+	</lib-cyto-scape-render>
+		
 </div>
 
 <div style="height: 90%; width: 20%; float: left; overflow: auto; overflow-x: hidden">
@@ -14,6 +18,8 @@
 	<button (click)="saveGraph()"> saveGraph </button>  <br>
 	<button (click)="exportImage()"> exportImage </button>  <br>
 	<button (click)="center()"> center </button>  <br>
+	<button (click)="setSelectionType('single')"> single Selection </button>  <br>
+	<button (click)="setSelectionType('additive')"> additive Selection </button>  <br> 
 
 	<button (click)="resetMouse()"> resetMouse </button>  <br>
 	<p>

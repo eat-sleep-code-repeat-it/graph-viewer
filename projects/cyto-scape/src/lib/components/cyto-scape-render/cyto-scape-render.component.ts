@@ -29,16 +29,17 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 	@Input() public saveGraph$: Observable<any>;
 	@Input() public openGraphFromJson$: Observable<any>;
 	@Input() public exportImage$: Observable<any>;
-
 	@Input() public mouseAction$: Observable<MouseAction>;
+	@Input() public selectionType$: Observable<string>;
+	
 
-  @Output() select: EventEmitter<any> = new EventEmitter<any>();
+	@Output() nodeSelected: EventEmitter<any> = new EventEmitter<any>();
+	@Output() edgeSelected: EventEmitter<any> = new EventEmitter<any>();
 
 	private cytoInstance: any;
 	private subscriptions: Subscription[] = [];
 
 	private mouseAction = MouseAction.None;
-	private localselect = null;
 	public constructor(private renderer : Renderer2, private el: ElementRef) {
 		this.layout = this.layout || {
 				name: 'grid',
@@ -101,7 +102,6 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		let cy_contianer = this.renderer.selectRootElement("#cy");
 		// container: document.getElementById('cy'),
 
-		this.localselect = this.select;
 		let cy = cytoscape({
 				container : cy_contianer,
 				layout: this.layout,
@@ -111,18 +111,15 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 				elements: this.elements,
 		});
 
-		//??
-		cy.boxSelectionEnabled(true);
-		cy.selectionType('additive');
-
 		// reset node width
-		cy.nodes().forEach(function(n){ n.data('width', 400); });
+		cy.nodes().forEach((n) => { n.data('width', 400); });
 		
 		cy.on('tap', (e) => {
 			if (e.target === cy) {
 				cy.elements().removeClass('faded');
 			}
 
+			/*
 			console.log('this.mouseAction', this.mouseAction);
 			if (this.mouseAction === MouseAction.AddNewNode) {
 				console.log('tag', e.position);
@@ -138,26 +135,23 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 					position: e.position
 				});
 			}
+			*/
 			
+		});
+		cy.on('click', (evt) => {
+			if (evt.target === cy) {
+				//cy.elements().removeClass('faded');								
+			}
 		});
 	
 		// handle edge event
-		cy.on('tap', 'node', (e) => {
-			console.log('tap node', e.target);
-			if (e.target) {
-				console.log('click node', e.target);
-
-				this.selectNodeHandler(e.target)
-			}
-		});
 		cy.on('select', 'edge', (evt) => {
 			evt.target.animate({
 				style: { 'line-color': 'red'}
 			}, {duration: 100 });
 
-			if (evt.target) {
-				console.log('selected edge:', evt.target);
-			}
+			console.log('selected edge:', evt.target);
+			this.edgeSelectedChangeEmitter();			
 		});
 		cy.on('unselect', 'edge', (evt) => {
 			evt.target.stop();
@@ -165,6 +159,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 				'line-color': evt.target.data('colorCode')
 			});
 			console.log('unselect edge', evt.target);
+			this.edgeSelectedChangeEmitter();		
 		});
 		cy.on('mouseover', 'edge', (evt) => {
 			console.log('mouseover edge', evt.target);
@@ -174,11 +169,18 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		});
 		
 		// handle node event
+		cy.on('tap', 'node', (e) => {
+			/*
+			if (e.target) {
+				console.log('click node', e.target);
+				this.nodeClickHandler(e.target)
+			}
+			*/
+		});
 		cy.on('click', 'node', (evt) => {
-			console.log('click node', evt.target);
 			if (evt.target) {
 				console.log('click node', evt.target);
-				this.selectNodeHandler(evt.tartget)
+				this.nodeClickHandler(evt.tartget)
 			}
 		});
 		cy.on('select', 'node', (evt) => {
@@ -186,16 +188,17 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 			evt.target.animate({
 				style: {'border-color': 'red', 'border-width': 2}
 			}, {duration: 100 });
+			
+			this.nodeSelectedChangeEmitter();			
 		});
 		cy.on('unselect', 'node', (evt) => {
 			console.log('unselect node', evt.target);
-
 			evt.target.stop();
 			evt.target.style({
 				'background-color': evt.target.data('colorCode'),
 				'border-color': 'black'
 			});
-			
+			this.nodeSelectedChangeEmitter();	
 		})
 		cy.on('mouseover', 'node', (evt) => {
 			console.log('mouseover node', evt.target);
@@ -211,13 +214,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		});
 		cy.on('drag', 'node', (evt) => {
 			console.log('drag node', evt.target);
-		});
-
-		cy.on('click', (evt) => {
-			if (evt.target === cy) {
-				cy.elements().removeClass('faded');								
-			}
-		});
+		});	
 		
 		this.cytoInstance = cy;
 	}
@@ -330,16 +327,28 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 				})
 			);
 		}
+
+		if (this.selectionType$) {
+			this.subscriptions.push(
+				this.selectionType$.subscribe((selectionType: string) =>{
+					if (selectionType === 'additive') {
+						this.cytoInstance.selectionType('additive');
+					} else {
+						this.cytoInstance.selectionType('single');
+					}
+					//??	this.cytoInstance.boxSelectionEnabled(true);
+				})
+			)
+		}
 		
 	}
 
-	private selectNodeHandler(node: any) {
-		console.log('select node:', node.data('id'), node);
+	private nodeClickHandler(node: any) {
+		console.log('node clicked:', node.data('id'), node);
 
 		const neighborhood = node.neighborhood().add(node);
 		this.cytoInstance.elements().addClass('faded');
 		neighborhood.removeClass('faded');
-		this.localselect.emit( !!node.data('description') ? node.data('description'): node.data('name'));
 	}
 	private panZoomInHandler(nodeId: string) {
 		console.log('panZoomIn->', nodeId);
@@ -388,6 +397,21 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 			downloadLink.download = `${fileName}`;
 			downloadLink.click();
 		}
+	}
+
+	nodeSelectedChangeEmitter() {
+		if (this.cytoInstance) {
+			const nodeSelected = this.cytoInstance.elements('node:selected'); 
+			this.nodeSelected.emit(nodeSelected);
+			console.log('nodeSelectedChange', nodeSelected);
+		}		
+	}
+	edgeSelectedChangeEmitter() {
+		if (this.cytoInstance) {
+			const edgeSelected = this.cytoInstance.elements('edge:selected'); 
+			this.edgeSelected.emit(edgeSelected);
+			console.log('edgeSelectedChange', edgeSelected);
+		}		
 	}
 
 	private addEdgeHandler() {

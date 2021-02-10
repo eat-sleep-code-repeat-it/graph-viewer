@@ -42,6 +42,7 @@ export class CytographComponent implements OnInit {
   exportImage$: Subject<any> = new Subject();
   addNode$: Subject<any> = new Subject();
   center$: Subject<any> = new Subject();
+  selectionType$: Subject<any> = new Subject();
   openGraphFromJson$: Subject<any> = new Subject();
 
   newNodeCount = 0;
@@ -49,9 +50,7 @@ export class CytographComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  nodeChange(event) {
-    this.node_name = event;
-  }
+
   addNewNode() {
     const newNode: CytoNode = { 
       id: this.newNodeCount++ + '_' + Date.now().toString(),
@@ -77,6 +76,9 @@ export class CytographComponent implements OnInit {
   center() {
     this.center$.next(true);
   }
+  setSelectionType(type: 'single'|'additive') {
+    this.selectionType$.next(type);
+  }
 
   onFileChange(evt: any) {
     const target: DataTransfer = <DataTransfer>(evt.target);
@@ -98,4 +100,18 @@ export class CytographComponent implements OnInit {
     }
   }
 
+  nodeSelectedChange(selected: any)
+  {
+    console.log('nodeSelected', selected);  
+    this.node_name = '';
+    if (selected.length > 0){
+      const node = selected[selected.length-1];
+      console.log('nodeSelected-node', node);
+      this.node_name = !!node.data('description') ? node.data('description'): node.data('name');
+    }    
+  }
+
+  edgeSelectedChange(selected: any) {
+    console.log('edgeSelected', selected);   
+  }
 }
