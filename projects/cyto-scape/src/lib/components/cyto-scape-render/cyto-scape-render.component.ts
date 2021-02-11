@@ -2,6 +2,8 @@ import { identifierModuleUrl, NodeWithI18n } from '@angular/compiler';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, OnChanges, Renderer2 } from '@angular/core';
 import  * as cytoscape from 'cytoscape';
 import * as dagre from 'cytoscape-dagre';
+import * as edgehandles from 'cytoscape-edgehandles';
+
 import { Observable, Subscription } from 'rxjs';
 import { CytoNode } from '../../models/cyto-node';
 import { CytoNodeShape } from '../../models/cyto-node-shape';
@@ -27,6 +29,8 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 	@Input() public addNode$: Observable<any>;
 	@Input() public addEdge$: Observable<any>;
 	@Input() public linkSelectedNodes$: Observable<boolean>;
+	@Input() public edgehandleMode$: Observable<boolean>;
+	
 	
 	@Input() public removeSelectedNode$: Observable<any>;
 	@Input() public saveGraph$: Observable<any>;
@@ -42,6 +46,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 	private subscriptions: Subscription[] = [];
 
 	private mouseAction = MouseAction.None;
+	private edgeHandler: any;
 	public constructor(private renderer : Renderer2, private el: ElementRef) {
 		this.layout = this.layout || {
 				name: 'grid',
@@ -92,6 +97,43 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 					'opacity': 0.25,
 					'text-opacity': 0
 				});
+
+		// some style for the edgehandle extension
+		this.style.selector('.eh-handle')
+				.css({
+					'background-color': 'red',
+					'width': 12,
+					'height': 12,
+					'shape': 'ellipse',
+					'overlay-opacity': 0,
+					'border-width': 12, // makes the handle easier to hit
+					'border-opacity': 0
+				})
+			.selector('.eh-hover')
+				.css({
+					'background-color': 'red'
+				}) 
+			.selector('.eh-source')
+				.css({
+					'border-width': 2,
+					'border-color': 'red'
+				}) 
+			.selector('.eh-target')
+				.css({
+					'border-width': 2, 'border-color': 'red'
+				}) 
+			.selector('.eh-preview, .eh-ghost-edge')
+				.css({
+					'background-color': 'red',
+					'line-color': 'red',
+					'width': '2',
+					'target-arrow-color': 'red',
+					'source-arrow-color': 'red'
+				})
+			.selector('.eh-ghost-edge.eh-preview-active')
+				.css({
+					'opacity': 0
+				});
 	}
 	
 	public ngOnChanges(): any {
@@ -100,8 +142,15 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 	}
 
 	public render() {
-		cytoscape.use(dagre); // register extension
-		let cy_contianer = this.renderer.selectRootElement("#cy");
+		if (typeof cytoscape('core', 'dagre') !== 'function') {
+			cytoscape.use(dagre); // register extension
+		}
+		
+		if (typeof cytoscape('core', 'edgehandles') !== 'function') {
+			cytoscape.use(edgehandles); // register extension
+		}
+
+		const cy_contianer = this.renderer.selectRootElement("#cy");
 		// container: document.getElementById('cy'),
 
 		let cy = cytoscape({
@@ -218,6 +267,9 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 			console.log('drag node', evt.target);
 		});	
 		
+		this.edgeHandler = cy.edgehandles(this.edgeHandleDefault());
+		// this.edgeHandler = cy.edgehandles();
+
 		this.cytoInstance = cy;
 	}
 
@@ -356,9 +408,101 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 				})
 			)
 		}
+		if (this.edgehandleMode$) {
+			this.subscriptions.push(
+				this.edgehandleMode$.subscribe((modeOn: boolean) =>{
+					if (modeOn) {
+						this.edgeHandler.enableDrawMode();
+					} else {
+						this.edgeHandler.disableDrawMode();
+					}
+				})
+			)
+		}
+		
 		
 	}
 
+	private edgeHandleDefault() {
+		// the default values of each option are outlined below:
+		let defaults = {
+			preview: true, // whether to show added edges preview before releasing selection
+			hoverDelay: 150, // time spent hovering over a target node before it is considered selected
+			handleNodes: 'node', // selector/filter function for whether edges can be made from a given node
+			snap: false, // when enabled, the edge can be drawn by just moving close to a target node
+			snapThreshold: 50, // the target node must be less than or equal to this many pixels away from the cursor/finger
+			snapFrequency: 15, // the number of times per second (Hz) that snap checks done (lower is less expensive)
+			noEdgeEventsInDraw: false, // set events:no to edges during draws, prevents mouseouts on compounds
+			disableBrowserGestures: true, // during an edge drawing gesture, disable browser gestures such as two-finger trackpad swipe and pinch-to-zoom
+			handlePosition: function( node ){
+				return 'middle top'; // sets the position of the handle in the format of "X-AXIS Y-AXIS" such as "left top", "middle top"
+			},
+			handleInDrawMode: false, // whether to show the handle in draw mode
+			edgeType: function( sourceNode, targetNode ){
+				// can return 'flat' for flat edges between nodes or 'node' for intermediate node between them
+				// returning null/undefined means an edge can't be added between the two nodes
+				return 'flat';
+			},
+			loopAllowed: function( node ){
+				// for the specified node, return whether edges from itself to itself are allowed
+				return false;
+			},
+			nodeLoopOffset: -50, // offset for edgeType: 'node' loops
+			nodeParams: function( sourceNode, targetNode ){
+				// for edges between the specified source and target
+				// return element object to be passed to cy.add() for intermediary node
+				return {};
+			},
+			edgeParams: function( sourceNode, targetNode, i ){
+				// for edges between the specified source and target
+				// return element object to be passed to cy.add() for edge
+				// NB: i indicates edge index in case of edgeType: 'node'
+				return {};
+			},
+			ghostEdgeParams: function(){
+				// return element object to be passed to cy.add() for the ghost edge
+				// (default classes are always added for you)
+				return {};
+			},
+			show: function( sourceNode ){
+				// fired when handle is shown
+			},
+			hide: function( sourceNode ){
+				// fired when the handle is hidden
+			},
+			start: function( sourceNode ){
+				// fired when edgehandles interaction starts (drag on handle)
+			},
+			complete: function( sourceNode, targetNode, addedEles ){
+				// fired when edgehandles is done and elements are added
+			},
+			stop: function( sourceNode ){
+				// fired when edgehandles interaction is stopped (either complete with added edges or incomplete)
+			},
+			cancel: function( sourceNode, cancelledTargets ){
+				// fired when edgehandles are cancelled (incomplete gesture)
+			},
+			hoverover: function( sourceNode, targetNode ){
+				// fired when a target is hovered
+			},
+			hoverout: function( sourceNode, targetNode ){
+				// fired when a target isn't hovered anymore
+			},
+			previewon: function( sourceNode, targetNode, previewEles ){
+				// fired when preview is shown
+			},
+			previewoff: function( sourceNode, targetNode, previewEles ){
+				// fired when preview is hidden
+			},
+			drawon: function(){
+				// fired when draw mode enabled
+			},
+			drawoff: function(){
+				// fired when draw mode disabled
+			}
+		};
+		return defaults;
+	}
 	private nodeClickHandler(node: any) {
 		console.log('node clicked:', node);
 

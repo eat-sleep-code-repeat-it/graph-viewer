@@ -7,6 +7,7 @@ import { CytoScapeRoutingModule } from './cyto-scape-routing.module';
 import { HelpMapComponent } from './components/help-map/help-map.component';
 import { CytoRenderDirective } from './directives/cyto-render.directive';
 import { CompoundNodesComponent } from './components/compound-nodes/compound-nodes.component';
+import { EdgeHandleComponent } from './components/edge-handle/edge-handle.component';
  
 
 
@@ -17,6 +18,7 @@ import { CompoundNodesComponent } from './components/compound-nodes/compound-nod
     CytoScapeRenderComponent,
     CytographComponent,
     CompoundNodesComponent,
+    EdgeHandleComponent,
     HelpMapComponent,
     CytoRenderDirective
   ],

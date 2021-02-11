@@ -1,11 +1,12 @@
 <div  [cytoRender]="bgColor" class="container m-t-6">
   <button type="button" class="btn btn-success m-3" (click)="changeComponent('graph-dagre')"> graph-dagre </button> 
   <button type="button" class="btn btn-success m-3" (click)="changeComponent('compound-nodes')"> compound-nodes </button> 
+  <button type="button" class="btn btn-success m-3" (click)="changeComponent('edge-handle')"> edge-handle </button> 
   <button type="button" class="btn btn-success m-3" (click)="changeComponent('help-map')"> help-map</button> 
   click here to change my background color
 </div>
 
-
 <lib-help-map *ngIf="componentShow ==='help-map'"> </lib-help-map>
 <lib-cytograph *ngIf="componentShow ==='graph-dagre'"></lib-cytograph>
 <lib-compound-nodes *ngIf="componentShow ==='compound-nodes'"></lib-compound-nodes>
+<lib-edge-handle *ngIf="componentShow ==='edge-handle'"></lib-edge-handle>

@@ -19,4 +19,6 @@
 - https://github.com/cytoscape/cytoscape.js/tree/master/documentation/demos
 - http://manual.cytoscape.org/en/stable/Styles.html
 - https://codepen.io/yeoupooh/pen/BjWvRa
-- https://js.cytoscape.org/#notation/compound-nodes
+- [compound-nodes](https://js.cytoscape.org/#notation/compound-nodes)
+- [edgehandles](https://github.com/cytoscape/cytoscape.js-edgehandles)
+- [Cytoscape tools for the web age: D3.js and Cytoscape.js exporters](https://europepmc.org/article/med/25520778)
