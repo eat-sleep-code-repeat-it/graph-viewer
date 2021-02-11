@@ -6,6 +6,7 @@ import { CytoScapeRenderComponent } from './components/cyto-scape-render/cyto-sc
 import { CytoScapeRoutingModule } from './cyto-scape-routing.module';
 import { HelpMapComponent } from './components/help-map/help-map.component';
 import { CytoRenderDirective } from './directives/cyto-render.directive';
+import { CompoundNodesComponent } from './components/compound-nodes/compound-nodes.component';
  
 
 
@@ -15,6 +16,7 @@ import { CytoRenderDirective } from './directives/cyto-render.directive';
     CytoScapeComponent,
     CytoScapeRenderComponent,
     CytographComponent,
+    CompoundNodesComponent,
     HelpMapComponent,
     CytoRenderDirective
   ],

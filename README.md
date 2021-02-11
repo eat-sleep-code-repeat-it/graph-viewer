@@ -19,3 +19,4 @@
 - https://github.com/cytoscape/cytoscape.js/tree/master/documentation/demos
 - http://manual.cytoscape.org/en/stable/Styles.html
 - https://codepen.io/yeoupooh/pen/BjWvRa
+- https://js.cytoscape.org/#notation/compound-nodes
