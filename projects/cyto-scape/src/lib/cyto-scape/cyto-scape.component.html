@@ -1,7 +1,8 @@
 <div  [cytoRender]="bgColor" class="container m-t-6">
-  <button type="button" class="btn btn-success m-3" routerLink="/graph-dagre"> graph-dagre </button> 
-  <button type="button" class="btn btn-success m-3" routerLink="/help-map"> help-map</button> 
+  <button type="button" class="btn btn-success m-3" (click)="changeComponent('graph-dagre')"> graph-dagre </button> 
+  <button type="button" class="btn btn-success m-3" (click)="changeComponent('help-map')"> help-map</button> 
   click here to change my background color
 </div>
 
-<router-outlet></router-outlet>
+<lib-help-map *ngIf="componentShow ==='help-map'"> </lib-help-map>
+<lib-cytograph *ngIf="componentShow ==='graph-dagre'"></lib-cytograph>

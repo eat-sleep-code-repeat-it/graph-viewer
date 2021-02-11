@@ -4,9 +4,9 @@ import { CytographComponent } from './components/cytograph/cytograph.component';
 import { HelpMapComponent } from './components/help-map/help-map.component';
 
 const routes: Routes = [
-  { path: '', component: CytographComponent },
-  { path: 'help-map', component: HelpMapComponent },
-  { path: 'graph-dagre', component: CytographComponent }  
+  { path: '', component: CytographComponent},
+  { path: 'help-map', component: HelpMapComponent},
+  { path: 'graph-dagre', component: CytographComponent}  
 ];
 
 @NgModule({

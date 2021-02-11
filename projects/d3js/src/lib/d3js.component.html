@@ -1,12 +1,23 @@
 
 
 <div class="container m-t-6">
-    <button type="button" class="btn btn-success m-3" routerLink="/basic-shape">basic shape</button>
-    <button type="button" class="btn btn-success" routerLink="/graph-one">Bar Chart One</button>
-    <button type="button" class="btn btn-success" routerLink="/basic-data">basic data file</button>
-    <button type="button" class="btn btn-success" routerLink="/basic-svg-bg">basic svg bg</button>
-    <button type="button" class="btn btn-success" routerLink="/basic-data-binding"> basic-data-binding </button>
-    <button type="button" class="btn btn-success" routerLink="/basic-bar-chart"> basic-bar-chart </button>    
+    <button type="button" class="btn btn-success m-3" (click)="changeComponent('basic-shape')">basic shape</button>
+    <button type="button" class="btn btn-success" (click)="changeComponent('graph-one')">Bar Chart One</button>
+    <button type="button" class="btn btn-success" (click)="changeComponent('basic-data-file')">basic data file</button>
+    <button type="button" class="btn btn-success" (click)="changeComponent('basic-svg-bg')">basic svg bg</button>
+    <button type="button" class="btn btn-success" (click)="changeComponent('basic-data-binding')"> basic-data-binding </button>
+    <button type="button" class="btn btn-success" (click)="changeComponent('basic-bar-chart')"> basic-bar-chart </button>    
 </div>
 
-<router-outlet></router-outlet>
+<lib-basic-shape *ngIf="componentShow ==='basic-shape'"></lib-basic-shape>
+<lib-graph-one *ngIf="componentShow ==='graph-one'"></lib-graph-one>
+<lib-basic-data-file *ngIf="componentShow ==='basic-data-file'"></lib-basic-data-file>
+<lib-basic-svg-bg *ngIf="componentShow ==='basic-svg-bg'"></lib-basic-svg-bg>
+<lib-basic-data-binding *ngIf="componentShow ==='basic-data-binding'"></lib-basic-data-binding>
+<lib-basic-bar-chart *ngIf="componentShow ==='basic-bar-chart'"></lib-basic-bar-chart>
+
+
+
+
+
+

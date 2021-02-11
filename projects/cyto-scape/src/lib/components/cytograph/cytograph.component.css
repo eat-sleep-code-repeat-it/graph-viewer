@@ -5,3 +5,10 @@ lib-cyto-scape-render {
   width: 100%;
   position: relative;
 }
+
+.tool-button {
+  width: 200px;
+}
+.tool-edit-button {
+  background-color: bisque;;
+}

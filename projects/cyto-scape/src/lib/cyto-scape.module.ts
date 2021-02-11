@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';  
 import { CytoScapeComponent } from './cyto-scape/cyto-scape.component';
 import { CytographComponent } from './components/cytograph/cytograph.component';
 import { CytoScapeRenderComponent } from './components/cyto-scape-render/cyto-scape-render.component';
@@ -18,6 +19,7 @@ import { CytoRenderDirective } from './directives/cyto-render.directive';
     CytoRenderDirective
   ],
   imports: [
+    CommonModule,
     CytoScapeRoutingModule
   ],
   exports: [CytoScapeComponent]

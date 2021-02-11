@@ -42,8 +42,11 @@ export class CytographComponent implements OnInit {
   exportImage$: Subject<any> = new Subject();
   addNode$: Subject<any> = new Subject();
   center$: Subject<any> = new Subject();
+  fitAllElement$: Subject<any> = new Subject();
   selectionType$: Subject<any> = new Subject();
   openGraphFromJson$: Subject<any> = new Subject();
+  removeSelectedNode$: Subject<any> = new Subject();
+  linkSelectedNodes$: Subject<any> = new Subject();
 
   newNodeCount = 0;
   constructor() { }
@@ -75,6 +78,9 @@ export class CytographComponent implements OnInit {
   }
   center() {
     this.center$.next(true);
+  }
+  fitAllElement() {
+    this.fitAllElement$.next(true);
   }
   setSelectionType(type: 'single'|'additive') {
     this.selectionType$.next(type);
@@ -110,8 +116,13 @@ export class CytographComponent implements OnInit {
       this.node_name = !!node.data('description') ? node.data('description'): node.data('name');
     }    
   }
-
+  removeSelectedNode() {
+    this.removeSelectedNode$.next(true);
+  }
   edgeSelectedChange(selected: any) {
     console.log('edgeSelected', selected);   
+  }
+  linkSelectedNodes() {
+    this.linkSelectedNodes$.next(true);
   }
 }

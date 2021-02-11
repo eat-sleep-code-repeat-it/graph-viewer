@@ -22,16 +22,18 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 	@Input() public panInChild$: Observable<any>;
 	@Input() public showHoverInfo$: Observable<any>;
 
+	@Input() public fitAllElement$: Observable<any>; // Fit to all elements in the graph
 	@Input() public center$: Observable<any>;
 	@Input() public addNode$: Observable<any>;
 	@Input() public addEdge$: Observable<any>;
+	@Input() public linkSelectedNodes$: Observable<boolean>;
+	
 	@Input() public removeSelectedNode$: Observable<any>;
 	@Input() public saveGraph$: Observable<any>;
 	@Input() public openGraphFromJson$: Observable<any>;
 	@Input() public exportImage$: Observable<any>;
 	@Input() public mouseAction$: Observable<MouseAction>;
 	@Input() public selectionType$: Observable<string>;
-	
 
 	@Output() nodeSelected: EventEmitter<any> = new EventEmitter<any>();
 	@Output() edgeSelected: EventEmitter<any> = new EventEmitter<any>();
@@ -254,6 +256,13 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 				})
 			);
 		}
+		if (this.fitAllElement$){
+			this.subscriptions.push(
+				this.fitAllElement$.subscribe(()=>{
+					this.cytoInstance.fit();
+				})
+			);
+		}
 		if (this.addNode$){
 			this.subscriptions.push(
 				this.addNode$.subscribe((newNode: CytoNode)=>{
@@ -282,6 +291,13 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 					}
 				})
 			);
+		}
+		if (this.linkSelectedNodes$){
+			this.subscriptions.push(
+				this.linkSelectedNodes$.subscribe(()=> {
+					this.linkSelectedNodesHandler();
+				})
+			)
 		}
 		
 		if (this.removeSelectedNode$){
@@ -344,7 +360,7 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 	}
 
 	private nodeClickHandler(node: any) {
-		console.log('node clicked:', node.data('id'), node);
+		console.log('node clicked:', node);
 
 		const neighborhood = node.neighborhood().add(node);
 		this.cytoInstance.elements().addClass('faded');
@@ -370,8 +386,12 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		console.log('addNode', newNode);
 	} 
  
-	private removeSelectedNodeHandler(selectedNode) {
-		console.log('removeSelectedNode', selectedNode);
+	private removeSelectedNodeHandler(selectedNodes: any[]) {
+		if (selectedNodes && selectedNodes.length>0){
+			selectedNodes.forEach(element => {
+				this.cytoInstance.remove(element);
+			});
+		}		
 	}
 
 	private exportImageHandler() {
@@ -412,6 +432,23 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 			this.edgeSelected.emit(edgeSelected);
 			console.log('edgeSelectedChange', edgeSelected);
 		}		
+	}
+	linkSelectedNodesHandler() {
+		const selectedNodes = this.cytoInstance.nodes(':selected');
+					if (selectedNodes && selectedNodes.length>1){
+						let j = 0;
+						for(let i=1; i<selectedNodes.length; i++){
+							this.cytoInstance.add({
+								group: 'edges',
+								data: {
+									source: selectedNodes[j].data('id'),
+									target: selectedNodes[i].data('id'),
+									strength: 10
+								}
+							});
+							j = i;
+						}
+					}
 	}
 
 	private addEdgeHandler() {

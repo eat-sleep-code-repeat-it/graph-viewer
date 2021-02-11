@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-
+import { CommonModule } from '@angular/common';  
 
 import { D3jsComponent } from './d3js.component';
 import { GraphOneComponent } from './components/graph-one/graph-one.component';
@@ -22,6 +22,7 @@ import { BasicBarChartComponent } from './components/basic-bar-chart/basic-bar-c
     BasicBarChartComponent
   ],
   imports: [
+    CommonModule,
     D3jsRoutingModule
   ],
   exports: [

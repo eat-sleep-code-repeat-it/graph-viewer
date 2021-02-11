@@ -1,11 +1,14 @@
 <div style="height: 90%; width: 80%; float: left; overflow: auto; overflow-y: hidden">
 	<lib-cyto-scape-render [elements]="graphData" [layout]="layout"
 		[addNode$] ="addNode$"
+		[linkSelectedNodes$]="linkSelectedNodes$"
 		[saveGraph$] ="saveGraph$"
 		[exportImage$] ="exportImage$"
 		[mouseAction$]= "mouseAction$"
 		[openGraphFromJson$]="openGraphFromJson$"
 		[center$] = "center$"
+		[fitAllElement$]="fitAllElement$"
+		[removeSelectedNode$]="removeSelectedNode$"
 		[selectionType$] = "selectionType$"
 		(nodeSelected)="nodeSelectedChange($event)"
 		(edgeSelected)="edgeSelectedChange($event)">
@@ -14,26 +17,32 @@
 </div>
 
 <div style="height: 90%; width: 20%; float: left; overflow: auto; overflow-x: hidden">
-	<button (click)="addNewNode()"> addNewNode </button> <br>
-	<button (click)="saveGraph()"> saveGraph </button>  <br>
-	<button (click)="exportImage()"> exportImage </button>  <br>
-	<button (click)="center()"> center </button>  <br>
-	<button (click)="setSelectionType('single')"> single Selection </button>  <br>
-	<button (click)="setSelectionType('additive')"> additive Selection </button>  <br> 
+	<h2> CytoGraph</h2>
+	<button class="tool-button" (click)="saveGraph()"> Save Graph </button>  <br>
+	<button class="tool-button" (click)="exportImage()"> Export Image </button>  <br>
+	<button class="tool-button" (click)="center()"> Center </button>  <br>
+	<button class="tool-button" (click)="fitAllElement()"> Fit to AllElement </button>  <br>
 
-	<button (click)="resetMouse()"> resetMouse </button>  <br>
+	<button class="tool-button" (click)="setSelectionType('single')"> Single Selection </button>  <br>
+	<button class="tool-button" (click)="setSelectionType('additive')"> Additive Selection </button>  <br> 
+
+	<button class="tool-button tool-edit-button" (click)="addNewNode()"> add New Node </button> <br>
+	<button class="tool-button tool-edit-button" (click)="removeSelectedNode()"> Remove Selected Nodes </button>  <br> 	
+	<button class="tool-button tool-edit-button" (click)="linkSelectedNodes()"> link Selected Nodes </button> <br>	
+
+	<button class="tool-button" (click)="resetMouse()"> Reset Mouse </button>  <br>
 	<p>
 		<input [hidden]="true" type="file"
 			(change)="onFileChange($event)"
 			[multiple]="false"
 			[disabled]="false"
 			#fileInput />
-		<button [disabled]="false" (click)="fileInput.click()">
+		<button class="tool-button" [disabled]="false" (click)="fileInput.click()">
 			Open Graph Json File
 		</button>
 	</p>
 
-	<h2> Selected Node Name: {{node_name}}</h2>
+	<h2> {{node_name}}</h2>
 	
 	
 </div>
