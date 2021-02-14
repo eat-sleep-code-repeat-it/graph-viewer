@@ -31,6 +31,24 @@
 	<button class="tool-button tool-edit-button" (click)="linkSelectedNodes()"> link Selected Nodes </button> <br>	
 
 	<button class="tool-button" (click)="resetMouse()"> Reset Mouse </button>  <br>
+
+	<div>
+		<label for="cars">Choose a layout:</label>
+		<select name="layout" id="layout" (change)="layoutChanged($event)">
+			<option value="grid" selected="selected">grid</option>
+			<option value="circle">circle</option>
+			<option value="breadth-first">breadth-first</option>
+			<option value="cose">cose</option>
+			<option value="concentric">concentric</option>		
+			<option value="preset">preset</option>		
+			<option value="random">random</option>	
+			<option value="cola">cola</option>	
+			<option value="dagre">dagre</option>	
+		</select>
+	</div>
+	
+
+
 	<p>
 		<input [hidden]="true" type="file"
 			(change)="onFileChange($event)"

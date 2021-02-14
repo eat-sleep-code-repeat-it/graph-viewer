@@ -3,11 +3,14 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, OnChanges, 
 import  * as cytoscape from 'cytoscape';
 import * as dagre from 'cytoscape-dagre';
 import * as edgehandles from 'cytoscape-edgehandles';
+import * as cola from 'cytoscape-cola';
 
 import { Observable, Subscription } from 'rxjs';
+import { GridLayoutOptions } from '../../layouts/grid-layout';
 import { CytoNode } from '../../models/cyto-node';
 import { CytoNodeShape } from '../../models/cyto-node-shape';
 import { MouseAction } from '../../models/mouse-action';
+
 
 @Component({
   selector: 'lib-cyto-scape-render',
@@ -47,13 +50,11 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 
 	private mouseAction = MouseAction.None;
 	private edgeHandler: any;
-	public constructor(private renderer : Renderer2, private el: ElementRef) {
-		this.layout = this.layout || {
-				name: 'grid',
-				directed: true,
-				padding: 0
-			};
+	private defultGridLayout = GridLayoutOptions; // { name: 'grid', directed: true, adding: 0 };
 
+	public constructor(private renderer : Renderer2, private el: ElementRef) {
+		this.layout = this.layout || this.defultGridLayout;
+	
 		this.zoom = this.zoom || {
 				min: 0.1,
 				max: 1.5
@@ -146,6 +147,9 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 			cytoscape.use(dagre); // register extension
 		}
 		
+		if (typeof cytoscape('core', 'cola') !== 'function') {
+			cytoscape.use(cola); // register extension
+		}
 		if (typeof cytoscape('core', 'edgehandles') !== 'function') {
 			cytoscape.use(edgehandles); // register extension
 		}
@@ -505,10 +509,11 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 	}
 	private nodeClickHandler(node: any) {
 		console.log('node clicked:', node);
-
-		const neighborhood = node.neighborhood().add(node);
-		this.cytoInstance.elements().addClass('faded');
-		neighborhood.removeClass('faded');
+		if (node && node.neighborhood()) {
+			const neighborhood = node.neighborhood().add(node);
+			this.cytoInstance.elements().addClass('faded');
+			neighborhood.removeClass('faded');
+		}		
 	}
 	private panZoomInHandler(nodeId: string) {
 		console.log('panZoomIn->', nodeId);
@@ -578,21 +583,23 @@ export class CytoScapeRenderComponent implements OnInit, OnChanges {
 		}		
 	}
 	linkSelectedNodesHandler() {
-		const selectedNodes = this.cytoInstance.nodes(':selected');
-					if (selectedNodes && selectedNodes.length>1){
-						let j = 0;
-						for(let i=1; i<selectedNodes.length; i++){
-							this.cytoInstance.add({
-								group: 'edges',
-								data: {
-									source: selectedNodes[j].data('id'),
-									target: selectedNodes[i].data('id'),
-									strength: 10
-								}
-							});
-							j = i;
+		if (this.cytoInstance) {
+			const selectedNodes = this.cytoInstance.nodes(':selected');
+			if (selectedNodes && selectedNodes.length>1){
+				let j = 0;
+				for(let i=1; i<selectedNodes.length; i++){
+					this.cytoInstance.add({
+						group: 'edges',
+						data: {
+							source: selectedNodes[j].data('id'),
+							target: selectedNodes[i].data('id'),
+							strength: 10
 						}
-					}
+					});
+					j = i;
+				}
+			}
+		}
 	}
 
 	private addEdgeHandler() {

@@ -22,3 +22,4 @@
 - [compound-nodes](https://js.cytoscape.org/#notation/compound-nodes)
 - [edgehandles](https://github.com/cytoscape/cytoscape.js-edgehandles)
 - [Cytoscape tools for the web age: D3.js and Cytoscape.js exporters](https://europepmc.org/article/med/25520778)
+- [compound-drag-and-drop](https://cytoscape.org/cytoscape.js-compound-drag-and-drop/)

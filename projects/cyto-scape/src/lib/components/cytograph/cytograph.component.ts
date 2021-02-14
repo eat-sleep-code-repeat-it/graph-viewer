@@ -1,5 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
+import { BreadthfirstLayoutOtions } from '../../layouts/breadth-first';
+import { ConcentricLayoutOptions } from '../../layouts/centric-layout';
+import { CircleLayoutOptions } from '../../layouts/circle-layout';
+import { ColaLayoutOptions } from '../../layouts/cola-layout';
+import { CoseLayoutOptions } from '../../layouts/cose-layout';
+import { DagreExtLayout } from '../../layouts/dagre-ext-layout';
+import { GridLayoutOptions } from '../../layouts/grid-layout';
+import { PresetLayoutOptions } from '../../layouts/preset-layout';
+import { RandomLayoutOptions } from '../../layouts/random-layout';
 import { CytoNode } from '../../models/cyto-node';
 import { CytoNodeShape } from '../../models/cyto-node-shape';
 import { MouseAction } from '../../models/mouse-action';
@@ -12,7 +21,13 @@ import { MouseAction } from '../../models/mouse-action';
 export class CytographComponent implements OnInit {
   node_name: string;
 
-  layout = { name: 'dagre', rankDir: 'LR', directed: true, padding: 0};
+  // layout = { name: 'dagre', rankDir: 'LR', directed: true, padding: 0};
+  // layout = BreadthfirstLayoutOtions;
+  // layout = CircleLayoutOptions;
+  // layout = ConcentricLayoutOptions;
+  // layout = CoseLayoutOptions;
+  layout = GridLayoutOptions;
+ 
 
   graphData = {
     nodes: [
@@ -124,5 +139,30 @@ export class CytographComponent implements OnInit {
   }
   linkSelectedNodes() {
     this.linkSelectedNodes$.next(true);
+  }
+  layoutChanged(evt: any) {
+
+    console.log(evt.target.value);
+    if (evt.target && evt.target.value === 'circle') {
+      this.layout = CircleLayoutOptions;
+    } else if (evt.target && evt.target.value === 'breadth-first') {
+      this.layout = BreadthfirstLayoutOtions;
+    } else if (evt.target && evt.target.value === 'concentric') {
+      this.layout = ConcentricLayoutOptions;
+    } else if (evt.target && evt.target.value === 'cose') {
+      this.layout = CoseLayoutOptions;
+    } else if (evt.target && evt.target.value === 'grid') {
+      this.layout = GridLayoutOptions;
+    } else if (evt.target && evt.target.value === 'dagre') {
+      this.layout = DagreExtLayout;
+    } else if (evt.target && evt.target.value === 'preset') {
+      this.layout = PresetLayoutOptions;
+    } else if (evt.target && evt.target.value === 'random') {
+      this.layout = RandomLayoutOptions;
+    } else if (evt.target && evt.target.value === 'cola') {
+      this.layout = ColaLayoutOptions;
+    } else {
+      this.layout = CoseLayoutOptions;
+    } 
   }
 }
